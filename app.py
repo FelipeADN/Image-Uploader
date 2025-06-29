@@ -42,6 +42,7 @@ def get_client_ip():
         return forwarded_for.split(',')[0].strip()
     return request.remote_addr
 
+# Only allow a connection to IPs in the whitelist
 @app.before_request
 def whitelist_ip():
     client_ip = get_client_ip()
@@ -50,11 +51,12 @@ def whitelist_ip():
     if client_ip not in app.config['WHITELISTED_IPS']:
         abort(403)
 
+# Main page
 @app.route('/', methods=['POST', 'GET'])
-@limiter.limit("50/hour")
+@limiter.limit("100/hour") # Limits amount of requests
 def index():
     if request.method == "POST":
-        if check_folder_size() >= app.config['MAX_FOLDER_SIZE']:
+        if check_folder_size() >= app.config['MAX_FOLDER_SIZE']: # Check folder size limit
             return "Folder size limit exceeded, please delete some pictures", 507
         # check if post has a file
         if 'file' not in request.files:
@@ -70,6 +72,7 @@ def index():
     images = os.listdir(app.config['UPLOAD_FOLDER'])
     return render_template('index.html', images=images)
 
+# Post for deleting a file
 @app.route('/delete/<filename>', methods=['POST'])
 def delete_file(filename):
     # Check if file is in the folder
@@ -81,6 +84,7 @@ def delete_file(filename):
         os.remove(filepath)
     return redirect(url_for('index'))
 
+# Handles rate limit error
 @app.errorhandler(429)
 def ratelimit_handler(e):
     return "Too many requests. Please slow down.", 429
