@@ -6,7 +6,7 @@ Features:
 - Delete Images
 - Sanitization of image name
 - Whitelists IP
-- Rate limits requests (50 / hour)
+- Rate limits requests (100 / hour)
 - Max folder size set to 200MB
 - Max image size set to 2MB
 
