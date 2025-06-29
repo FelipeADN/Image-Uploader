@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask, request, redirect, render_template, abort, url_for
 from flask_limiter import Limiter
 from werkzeug.utils import secure_filename
@@ -8,9 +9,14 @@ limiter = Limiter(key_func=lambda: "global", app=app) # rate limiter
 
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
-app.config['WHITELISTED_IPS'] = ['20.218.226.2']
 app.config['MAX_FOLDER_SIZE'] = 200 * 1024 * 1024  # 200 MB
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2 MB
+# Get whitelisted IPs from environment variable
+try:
+    app.config['WHITELISTED_IPS'] = json.loads(os.getenv("WHITELISTED_IPS", "[]"))
+except json.JSONDecodeError:
+    app.config['WHITELISTED_IPS'] = []
+
 
 # upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
