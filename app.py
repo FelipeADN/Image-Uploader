@@ -41,11 +41,11 @@ def get_client_ip():
         return forwarded_for.split(',')[0].strip()
     return request.remote_addr
 
-@app.before_request
-def whitelist_ip():
-    client_ip = get_client_ip()
-    if client_ip not in app.config['WHITELISTED_IPS']:
-        abort(403)
+# @app.before_request
+# def whitelist_ip():
+#     client_ip = get_client_ip()
+#     if client_ip not in app.config['WHITELISTED_IPS']:
+#         abort(403)
 
 @app.route('/', methods=['POST', 'GET'])
 @limiter.limit("50/hour")
