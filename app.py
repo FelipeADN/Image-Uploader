@@ -36,16 +36,19 @@ def check_folder_size():
 
 def get_client_ip():
     forwarded_for = request.headers.get('X-Forwarded-For', '')
+    print(f"Forwarded For Header: {forwarded_for}")
     if forwarded_for:
         # take the original IP
         return forwarded_for.split(',')[0].strip()
     return request.remote_addr
 
-# @app.before_request
-# def whitelist_ip():
-#     client_ip = get_client_ip()
-#     if client_ip not in app.config['WHITELISTED_IPS']:
-#         abort(403)
+@app.before_request
+def whitelist_ip():
+    client_ip = get_client_ip()
+    print(f"Client IP: {client_ip}")
+    print(f"Whitelisted IPs: {app.config['WHITELISTED_IPS']}")
+    if client_ip not in app.config['WHITELISTED_IPS']:
+        abort(403)
 
 @app.route('/', methods=['POST', 'GET'])
 @limiter.limit("50/hour")
