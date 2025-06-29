@@ -44,8 +44,6 @@ def get_client_ip():
 @app.before_request
 def whitelist_ip():
     client_ip = get_client_ip()
-    print(f"Client IP: {client_ip}")
-    print(f"Whitelisted IPs: {app.config['WHITELISTED_IPS']}")
     if client_ip not in app.config['WHITELISTED_IPS']:
         abort(403)
 
