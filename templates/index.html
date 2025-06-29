@@ -1,0 +1,37 @@
+{% extends 'base.html' %} 
+
+{% block head %} 
+{% endblock %}
+
+{% block body %}
+<div class="container d-flex justify-content-center">
+    <div class="w-100" style="max-width: 750px;">
+
+        <h1 class="display-2 text-center mt-3">Image Uploader</h1>
+
+        <p class="mt-4">Upload your images here:</p>
+
+        <!-- Upload Form -->
+        
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3 d-flex align-items-center gap-2">
+                <input class="form-control" id="formFile" type="file" name="file" accept="image/*" required>
+                <button type="submit" class="btn btn-success">Upload!</button>
+            </div>
+        </form>
+    
+
+        <!-- Display Images -->  
+        {% for image in images %}
+        <div class="card mb-3">
+            <img class="rounded" src="{{ url_for('static', filename='uploads/' ~ image) }}" alt="{{ image }}">
+            <div class="card-img-overlay">
+                <form action="/delete/{{ image }}" method="post">
+                    <button type="submit" class="btn btn-outline-danger btn-lg">Delete Image</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+</div>
+{% endblock %}
